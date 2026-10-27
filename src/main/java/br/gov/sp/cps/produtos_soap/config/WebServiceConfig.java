@@ -15,11 +15,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.config.annotation.WsConfigurer;
 import org.springframework.ws.server.EndpointInterceptor;
 import org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor;
+import java.util.Properties;
+import br.gov.sp.cps.produtos_soap.exception.ProdutoNaoEncontradoException;
+import org.springframework.ws.soap.server.endpoint.SoapFaultDefinition;
+import org.springframework.ws.soap.server.endpoint.SoapFaultMappingExceptionResolver;
 
 @EnableWs
 @Configuration
 public class WebServiceConfig implements WsConfigurer {
-    
+    @Bean
+    public SoapFaultMappingExceptionResolver exceptionResolver() {
+
+        SoapFaultMappingExceptionResolver resolver =
+                new SoapFaultMappingExceptionResolver();
+
+        SoapFaultDefinition faultDefinition =
+                new SoapFaultDefinition();
+
+        faultDefinition.setFaultCode(SoapFaultDefinition.CLIENT);
+
+        resolver.setDefaultFault(faultDefinition);
+
+        Properties errorMappings = new Properties();
+
+        errorMappings.setProperty(
+                ProdutoNaoEncontradoException.class.getName(),
+                "CLIENT"
+        );
+
+        resolver.setExceptionMappings(errorMappings);
+
+        resolver.setOrder(1);
+
+        return resolver;
+    }
+
     @Autowired
     private Wss4jSecurityInterceptor securityInterceptor;
 
