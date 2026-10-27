@@ -10,10 +10,23 @@ import org.springframework.ws.transport.http.MessageDispatcherServlet;
 import org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition;
 import org.springframework.xml.xsd.SimpleXsdSchema;
 import org.springframework.xml.xsd.XsdSchema;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ws.config.annotation.WsConfigurer;
+import org.springframework.ws.server.EndpointInterceptor;
+import org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor;
 
 @EnableWs
 @Configuration
-public class WebServiceConfig {
+public class WebServiceConfig implements WsConfigurer {
+    
+    @Autowired
+    private Wss4jSecurityInterceptor securityInterceptor;
+
+    @Override
+    public void addInterceptors(List<EndpointInterceptor> interceptors) {
+    interceptors.add(securityInterceptor);
+}
 
     @Bean
     public ServletRegistrationBean<MessageDispatcherServlet> messageDispatcherServlet(
