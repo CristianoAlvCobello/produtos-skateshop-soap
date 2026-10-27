@@ -2,11 +2,11 @@ package br.gov.sp.cps.produtos_soap.endpoint;
 
 import br.gov.sp.cps.produtos_soap.model.ConsultarProdutoRequest;
 import br.gov.sp.cps.produtos_soap.model.ConsultarProdutoResponse;
-
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+import br.gov.sp.cps.produtos_soap.exception.ProdutoNaoEncontradoException;
 
 @Endpoint
 public class ProdutoEndpoint {
@@ -36,11 +36,10 @@ public class ProdutoEndpoint {
             response.setQuantidadeEstoque(4);
 
         } else {
-            response.setNome("Produto não encontrado");
-            response.setDescricao("-");
-            response.setMarca("-");
-            response.setQuantidadeEstoque(0);
-        }
+            throw new ProdutoNaoEncontradoException(
+            "Produto não encontrado para o código: " + request.getCodigo()
+    );
+}
 
         return response;
     }
